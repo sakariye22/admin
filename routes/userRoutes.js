@@ -2,33 +2,35 @@ const express = require('express');
 const router = express.Router();
 require('dotenv').config();
 const admin = require('firebase-admin');
-//const { userApp } = require('./firebaseAdminInit'); 
 
-admin.initializeApp({
+const userApp = admin.initializeApp({
   credential: admin.credential.cert(require('./passenger-view.json')),
-  databaseURL:process.env.DATABASE_URL_USER
-});
+  databaseURL: process.env.DATABASE_URL_USER
+}, 'userApp'); 
 
-//const db = userApp.database();
-const db = admin.database();
 router.post('/register', async (req, res) => {
   const { email, password, ...additionalUserData } = req.body;
 
   try {
-    const userRecord = await admin.auth().createUser({
+    console.log('Trying to create user with email:', email);
+
+    const userRecord = await userApp.auth().createUser({
       email,
       password,
     });
 
-    
-    const userRef = db.ref(`users/${userRecord.uid}`);
+    const userRef = userApp.database().ref(`users/${userRecord.uid}`);
     await userRef.set({
       email: userRecord.email,
       ...additionalUserData
     });
+    console.log('User created with UID:', userRecord.uid);
+    res.status(201).send({ uid: userRecord.uid, email: userRecord.email });
+    console.log('Response sent'); 
 
     res.status(201).send({ uid: userRecord.uid, email: userRecord.email });
   } catch (error) {
+    console.error('Error during user registration:', error);
     res.status(500).send({ error: error.code, message: error.message });
   }
 });

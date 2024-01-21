@@ -1,5 +1,6 @@
 const express = require("express");
 const userRoutes = require ('./routes/userRoutes.js');
+const driverRoutes = require ('./routes/driverRoutes.js');
 const app = express();
 const cors = require('cors');
 
@@ -7,6 +8,7 @@ const cors = require('cors');
 app.use(express.json());
 app.use(cors());
 app.use('/api/users', userRoutes);
+app.use('/api/drivers', driverRoutes);
 app.get("/", (req, res) => {
    res.send("This is home page.");
 });
