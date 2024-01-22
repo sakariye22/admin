@@ -8,6 +8,10 @@ const userApp = admin.initializeApp({
   databaseURL: process.env.DATABASE_URL_USER
 }, 'userApp'); 
 
+
+
+
+
 router.post('/register', async (req, res) => {
   const { email, password, ...additionalUserData } = req.body;
 
@@ -34,5 +38,8 @@ router.post('/register', async (req, res) => {
     res.status(500).send({ error: error.code, message: error.message });
   }
 });
+
+
+
 
 module.exports = router;
